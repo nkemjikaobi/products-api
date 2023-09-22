@@ -9,5 +9,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "restify": "^11.1.0",
+    "save": "^2.9.0"
+  }
 }
