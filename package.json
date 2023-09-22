@@ -4,7 +4,8 @@
   "description": "This is a API service that enables you to create a product, view the products, view a single product and delete a product",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node index.js"
   },
   "keywords": [],
   "author": "",
