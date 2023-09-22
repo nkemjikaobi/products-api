@@ -1,0 +1,12 @@
+{
+  "name": "mapd713-a1-nkemjikaobi",
+  "version": "1.0.0",
+  "description": "This is a API service that enables you to create a product, view the products, view a single product and delete a product",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
