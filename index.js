@@ -126,3 +126,26 @@ server.post('/products', function (req, res, next) {
 		res.send(201, product);
 	});
 });
+
+// Delete product with the given id
+server.del('/products/:id', function (req, res, next) {
+	//Increment the delete count
+	deleteCount += 1;
+
+	//Log the count and endpoint info
+	console.log(
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}`
+	);
+	console.log('DELETE /products/:id params=>' + JSON.stringify(req.params));
+	console.log('>delete a product DELETE: received request');
+
+	// Delete the product within the mock database
+	productMockDataBase.delete(req.params.id, function (error, product) {
+		// If there are any errors, pass them to next in the correct format
+		if (error) return next(new Error(JSON.stringify(error.errors)));
+
+		console.log('< delete a product DELETE: sending response');
+		// Send a 204 response
+		res.send(204);
+	});
+});
