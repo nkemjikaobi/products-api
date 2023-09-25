@@ -3,6 +3,7 @@ const PORT = 7000;
 const HOST = '127.0.0.1';
 
 const restify = require('restify');
+let errors = require('restify-errors');
 
 //Invoke the persistence engine to save the products (Just like a mock database)
 const productMockDataBase = require('save')('products');
@@ -36,6 +37,10 @@ server.listen(PORT, HOST, function () {
 		`   UPDATE A PRODUCT (method: PUT) => ${HOST}:${PORT}/products/:id`
 	);
 });
+
+//Allow the endpoints to receive body payload
+server.use(restify.plugins.fullResponse());
+server.use(restify.plugins.bodyParser());
 
 // Get all products in the system
 server.get('/products', function (req, res, next) {
@@ -116,11 +121,16 @@ server.post('/products', function (req, res, next) {
 		// If there are any errors, pass them to next in the correct format
 		return next(new errors.BadRequestError('quantity must be supplied'));
 	}
+	if (req.body.productId === undefined) {
+		// If there are any errors, pass them to next in the correct format
+		return next(new errors.BadRequestError('productId must be supplied'));
+	}
 
 	let newProduct = {
 		name: req.body.name,
 		price: req.body.price,
 		quantity: req.body.quantity,
+		productId: req.body.productId,
 	};
 
 	// Create the user using the persistence engine
@@ -158,7 +168,7 @@ server.del('/products/:id', function (req, res, next) {
 });
 
 // Delete all products
-server.del('/products/', function (req, res, next) {
+server.del('/products', function (req, res, next) {
 	//Increment the delete count
 	deleteCount += 1;
 
@@ -207,20 +217,25 @@ server.put('/products/:id', function (req, res, next) {
 		// If there are any errors, pass them to next in the correct format
 		return next(new errors.BadRequestError('quantity must be supplied'));
 	}
+	if (req.body.productId === undefined) {
+		// If there are any errors, pass them to next in the correct format
+		return next(new errors.BadRequestError('productId must be supplied'));
+	}
 
 	let newProduct = {
 		_id: req.body.id,
 		name: req.body.name,
 		price: req.body.price,
 		quantity: req.body.quantity,
+		productId: req.body.productId,
 	};
 
 	// Update the user with the persistence engine
-	productMockDataBase.update(newProduct, function (error, user) {
+	productMockDataBase.update(newProduct, function (error, product) {
 		// If there are any errors, pass them to next in the correct format
 		if (error) return next(new Error(JSON.stringify(error.errors)));
 
-		console.log('< delete all products DELETE: sending response');
+		console.log('< update a product PUT: sending response');
 		// Send a 200 OK response
 		res.send(200);
 	});
