@@ -13,6 +13,7 @@ const server = restify.createServer({ name: SERVER_NAME });
 let getCount = 0;
 let postCount = 0;
 let deleteCount = 0;
+let updateCount = 0;
 
 server.listen(PORT, HOST, function () {
 	console.log('Server %s listening at %s', server.name, server.url);
@@ -27,7 +28,13 @@ server.listen(PORT, HOST, function () {
 	console.log(
 		`   DELETE A PRODUCT (method: DELETE) => ${HOST}:${PORT}/products/:id`
 	);
+	console.log(
+		`   DELETE ALL PRODUCTS (method: DELETE) => ${HOST}:${PORT}/products`
+	);
 	console.log(`   ADD NEW PRODUCT (method: POST) => ${HOST}:${PORT}/products`);
+	console.log(
+		`   UPDATE A PRODUCT (method: PUT) => ${HOST}:${PORT}/products/:id`
+	);
 });
 
 // Get all products in the system
@@ -37,7 +44,7 @@ server.get('/products', function (req, res, next) {
 
 	//Log the count and endpoint info
 	console.log(
-		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}`
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}, Update: ${updateCount}`
 	);
 	console.log('GET /products params=>' + JSON.stringify(req.params));
 	console.log('>get all products GET: received request');
@@ -57,7 +64,7 @@ server.get('/products/:id', function (req, res, next) {
 
 	//Log the count and endpoint info
 	console.log(
-		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}`
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}, Update: ${updateCount}`
 	);
 	console.log('GET /products/:id params=>' + JSON.stringify(req.params));
 	console.log('>get a single product GET: received request');
@@ -88,7 +95,7 @@ server.post('/products', function (req, res, next) {
 
 	//Log the count and endpoint info
 	console.log(
-		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}`
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}, Update: ${updateCount}`
 	);
 	console.log('POST /products params=>' + JSON.stringify(req.params));
 	console.log(
@@ -134,7 +141,7 @@ server.del('/products/:id', function (req, res, next) {
 
 	//Log the count and endpoint info
 	console.log(
-		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}`
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}, Update: ${updateCount}`
 	);
 	console.log('DELETE /products/:id params=>' + JSON.stringify(req.params));
 	console.log('>delete a product DELETE: received request');
@@ -145,6 +152,29 @@ server.del('/products/:id', function (req, res, next) {
 		if (error) return next(new Error(JSON.stringify(error.errors)));
 
 		console.log('< delete a product DELETE: sending response');
+		// Send a 204 response
+		res.send(204);
+	});
+});
+
+// Delete all products
+server.del('/products/', function (req, res, next) {
+	//Increment the delete count
+	deleteCount += 1;
+
+	//Log the count and endpoint info
+	console.log(
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}, Update: ${updateCount}`
+	);
+	console.log('DELETE /products/ params=>' + JSON.stringify(req.params));
+	console.log('>delete all products DELETE: received request');
+
+	// Delete all the products within the mock database
+	productMockDataBase.deleteMany({}, function (error, product) {
+		// If there are any errors, pass them to next in the correct format
+		if (error) return next(new Error(JSON.stringify(error.errors)));
+
+		console.log('< delete all products DELETE: sending response');
 		// Send a 204 response
 		res.send(204);
 	});
