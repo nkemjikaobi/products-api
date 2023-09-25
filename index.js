@@ -14,7 +14,6 @@ const server = restify.createServer({ name: SERVER_NAME });
 let getCount = 0;
 let postCount = 0;
 let deleteCount = 0;
-let updateCount = 0;
 
 server.listen(PORT, HOST, function () {
 	console.log('Server %s listening at %s', server.name, server.url);
@@ -33,9 +32,6 @@ server.listen(PORT, HOST, function () {
 		`   DELETE ALL PRODUCTS (method: DELETE) => ${HOST}:${PORT}/products`
 	);
 	console.log(`   ADD NEW PRODUCT (method: POST) => ${HOST}:${PORT}/products`);
-	console.log(
-		`   UPDATE A PRODUCT (method: PUT) => ${HOST}:${PORT}/products/:id`
-	);
 });
 
 //Allow the endpoints to receive body payload
@@ -49,7 +45,7 @@ server.get('/products', function (req, res, next) {
 
 	//Log the count and endpoint info
 	console.log(
-		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}, Update: ${updateCount}`
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}`
 	);
 	console.log('GET /products params=>' + JSON.stringify(req.params));
 	console.log('>get all products GET: received request');
@@ -69,7 +65,7 @@ server.get('/products/:id', function (req, res, next) {
 
 	//Log the count and endpoint info
 	console.log(
-		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}, Update: ${updateCount}`
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}`
 	);
 	console.log('GET /products/:id params=>' + JSON.stringify(req.params));
 	console.log('>get a single product GET: received request');
@@ -100,7 +96,7 @@ server.post('/products', function (req, res, next) {
 
 	//Log the count and endpoint info
 	console.log(
-		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}, Update: ${updateCount}`
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}`
 	);
 	console.log('POST /products params=>' + JSON.stringify(req.params));
 	console.log(
@@ -151,7 +147,7 @@ server.del('/products/:id', function (req, res, next) {
 
 	//Log the count and endpoint info
 	console.log(
-		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}, Update: ${updateCount}`
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}`
 	);
 	console.log('DELETE /products/:id params=>' + JSON.stringify(req.params));
 	console.log('>delete a product DELETE: received request');
@@ -174,7 +170,7 @@ server.del('/products', function (req, res, next) {
 
 	//Log the count and endpoint info
 	console.log(
-		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}, Update: ${updateCount}`
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}`
 	);
 	console.log('DELETE /products/ params=>' + JSON.stringify(req.params));
 	console.log('>delete all products DELETE: received request');
@@ -187,56 +183,5 @@ server.del('/products', function (req, res, next) {
 		console.log('< delete all products DELETE: sending response');
 		// Send a 204 response
 		res.send(204);
-	});
-});
-
-//Bonus endpoint
-// Update a product by their id
-server.put('/products/:id', function (req, res, next) {
-	//Increment the get count
-	updateCount += 1;
-
-	//Log the count and endpoint info
-	console.log(
-		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}, Update: ${updateCount}`
-	);
-	console.log('PUT /products params=>' + JSON.stringify(req.params));
-	console.log('PUT /products body=>' + JSON.stringify(req.body));
-	console.log('>update a product PUT: received request');
-
-	// validation of manadatory fields
-	if (req.body.name === undefined) {
-		// If there are any errors, pass them to next in the correct format
-		return next(new errors.BadRequestError('name must be supplied'));
-	}
-	if (req.body.price === undefined) {
-		// If there are any errors, pass them to next in the correct format
-		return next(new errors.BadRequestError('price must be supplied'));
-	}
-	if (req.body.quantity === undefined) {
-		// If there are any errors, pass them to next in the correct format
-		return next(new errors.BadRequestError('quantity must be supplied'));
-	}
-	if (req.body.productId === undefined) {
-		// If there are any errors, pass them to next in the correct format
-		return next(new errors.BadRequestError('productId must be supplied'));
-	}
-
-	let newProduct = {
-		_id: req.body.id,
-		name: req.body.name,
-		price: req.body.price,
-		quantity: req.body.quantity,
-		productId: req.body.productId,
-	};
-
-	// Update the user with the persistence engine
-	productMockDataBase.update(newProduct, function (error, product) {
-		// If there are any errors, pass them to next in the correct format
-		if (error) return next(new Error(JSON.stringify(error.errors)));
-
-		console.log('< update a product PUT: sending response');
-		// Send a 200 OK response
-		res.send(200);
 	});
 });
