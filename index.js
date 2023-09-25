@@ -27,7 +27,7 @@ server.listen(PORT, HOST, function () {
 	console.log(
 		`   DELETE A PRODUCT (method: DELETE) => ${HOST}:${PORT}/products/:id`
 	);
-	console.log(`   ADD A PRODUCT (method: POST) => ${HOST}:${PORT}/products`);
+	console.log(`   ADD NEW PRODUCT (method: POST) => ${HOST}:${PORT}/products`);
 });
 
 // Get all products in the system
@@ -79,4 +79,50 @@ server.get('/products/:id', function (req, res, next) {
 			}
 		}
 	);
+});
+
+// Create a new product
+server.post('/products', function (req, res, next) {
+	//Increment the post count
+	postCount += 1;
+
+	//Log the count and endpoint info
+	console.log(
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}`
+	);
+	console.log('POST /products params=>' + JSON.stringify(req.params));
+	console.log(
+		'add new product POST /products body=>' + JSON.stringify(req.body)
+	);
+	console.log('>add new product POST: received request');
+
+	// validation of manadatory fields
+	if (req.body.name === undefined) {
+		// If there are any errors, pass them to next in the correct format
+		return next(new errors.BadRequestError('name must be supplied'));
+	}
+	if (req.body.price === undefined) {
+		// If there are any errors, pass them to next in the correct format
+		return next(new errors.BadRequestError('price must be supplied'));
+	}
+	if (req.body.quantity === undefined) {
+		// If there are any errors, pass them to next in the correct format
+		return next(new errors.BadRequestError('quantity must be supplied'));
+	}
+
+	let newProduct = {
+		name: req.body.name,
+		price: req.body.price,
+		quantity: req.body.quantity,
+	};
+
+	// Create the user using the persistence engine
+	productMockDataBase.create(newProduct, function (error, product) {
+		// If there are any errors, pass them to next in the correct format
+		if (error) return next(new Error(JSON.stringify(error.errors)));
+
+		console.log('< add new product POST: sending response');
+		// Send the product if no issues
+		res.send(201, product);
+	});
 });
