@@ -179,3 +179,49 @@ server.del('/products/', function (req, res, next) {
 		res.send(204);
 	});
 });
+
+//Bonus endpoint
+// Update a product by their id
+server.put('/products/:id', function (req, res, next) {
+	//Increment the get count
+	updateCount += 1;
+
+	//Log the count and endpoint info
+	console.log(
+		`Processed Request Count--> Get: ${getCount}, Post:${postCount}, Delete: ${deleteCount}, Update: ${updateCount}`
+	);
+	console.log('PUT /products params=>' + JSON.stringify(req.params));
+	console.log('PUT /products body=>' + JSON.stringify(req.body));
+	console.log('>update a product PUT: received request');
+
+	// validation of manadatory fields
+	if (req.body.name === undefined) {
+		// If there are any errors, pass them to next in the correct format
+		return next(new errors.BadRequestError('name must be supplied'));
+	}
+	if (req.body.price === undefined) {
+		// If there are any errors, pass them to next in the correct format
+		return next(new errors.BadRequestError('price must be supplied'));
+	}
+	if (req.body.quantity === undefined) {
+		// If there are any errors, pass them to next in the correct format
+		return next(new errors.BadRequestError('quantity must be supplied'));
+	}
+
+	let newProduct = {
+		_id: req.body.id,
+		name: req.body.name,
+		price: req.body.price,
+		quantity: req.body.quantity,
+	};
+
+	// Update the user with the persistence engine
+	productMockDataBase.update(newProduct, function (error, user) {
+		// If there are any errors, pass them to next in the correct format
+		if (error) return next(new Error(JSON.stringify(error.errors)));
+
+		console.log('< delete all products DELETE: sending response');
+		// Send a 200 OK response
+		res.send(200);
+	});
+});
